@@ -6,24 +6,42 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
+const parseCsvEnv = (value) =>
+  String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://fixmyooru.vercel.app",
+  ...parseCsvEnv(process.env.FRONTEND_URL),
+  ...parseCsvEnv(process.env.FRONTEND_URLS),
 ];
 
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+
+  // Allow Vercel preview deployments such as https://fixmyooru-git-main-*.vercel.app
+  return /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(origin);
+};
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 // ─── Middleware ──────────────────────────────────────────
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
