@@ -6,14 +6,25 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://fixmyooru.vercel.app",
+];
+
 // ─── Middleware ──────────────────────────────────────────
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://fixmyooru.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─── Health Check ───────────────────────────────────────
