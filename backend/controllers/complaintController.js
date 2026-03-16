@@ -47,7 +47,7 @@ exports.getMyComplaints = async (req, res) => {
 
     const filter = { user: req.user._id };
     if (status && status !== "All") {
-      filter.status = status;
+      filter.status = status === "Completed" ? { $in: ["Completed", "Resolved"] } : status;
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -83,18 +83,18 @@ exports.getStats = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const [total, pending, inProgress, resolved] = await Promise.all([
+    const [total, pending, inProgress, completed] = await Promise.all([
       Complaint.countDocuments({ user: userId }),
       Complaint.countDocuments({ user: userId, status: "Pending" }),
       Complaint.countDocuments({ user: userId, status: "In Progress" }),
-      Complaint.countDocuments({ user: userId, status: "Resolved" }),
+      Complaint.countDocuments({ user: userId, status: { $in: ["Completed", "Resolved"] } }),
     ]);
 
     res.status(200).json({
       success: true,
       message: "Stats fetched successfully.",
       data: {
-        stats: { total, pending, inProgress, resolved },
+        stats: { total, pending, inProgress, completed, resolved: completed },
       },
     });
   } catch (error) {

@@ -9,6 +9,10 @@ import InputField from '../components/InputField';
 import Button from '../components/Button';
 import { Mail, Lock, LogIn } from 'lucide-react';
 
+const HAS_GOOGLE_CLIENT_ID =
+  import.meta.env.VITE_GOOGLE_CLIENT_ID &&
+  !String(import.meta.env.VITE_GOOGLE_CLIENT_ID).includes('your_google_client_id_here');
+
 const SignIn = () => {
   const navigate = useNavigate();
   const { signin, googleLogin } = useAuth();
@@ -90,16 +94,20 @@ const SignIn = () => {
       </div>
 
       {/* Google */}
-      <div className="flex justify-center">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={() => toast.error('Google login failed')}
-          theme="outline"
-          size="large"
-          width="100%"
-          text="signin_with"
-        />
-      </div>
+      {HAS_GOOGLE_CLIENT_ID ? (
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => toast.error('Google login failed')}
+            theme="outline"
+            size="large"
+            width="100%"
+            text="signin_with"
+          />
+        </div>
+      ) : (
+        <p className="text-center text-xs text-gray-400">Google login is not configured.</p>
+      )}
 
       <motion.p
         initial={{ opacity: 0 }}

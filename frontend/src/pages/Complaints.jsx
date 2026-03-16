@@ -29,6 +29,12 @@ const statusConfig = {
     bg: 'bg-blue-50',
     border: 'border-blue-200',
   },
+  Completed: {
+    icon: CheckCircle2,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+  },
   Resolved: {
     icon: CheckCircle2,
     color: 'text-emerald-600',
@@ -37,7 +43,7 @@ const statusConfig = {
   },
 };
 
-const filters = ['All', 'Pending', 'In Progress', 'Resolved'];
+const filters = ['All', 'Pending', 'In Progress', 'Completed'];
 
 const Complaints = () => {
   const [complaints, setComplaints] = useState([]);

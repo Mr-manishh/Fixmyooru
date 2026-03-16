@@ -29,7 +29,7 @@ const Home = () => {
     total: 0,
     pending: 0,
     inProgress: 0,
-    resolved: 0,
+    completed: 0,
   });
 
   useEffect(() => {
@@ -95,8 +95,8 @@ const Home = () => {
           <motion.div variants={fadeIn} initial="hidden" animate="visible" custom={3}>
             <StatCard
               icon={CheckCircle2}
-              label="Resolved"
-              value={stats.resolved}
+              label="Completed"
+              value={stats.completed}
               color="from-emerald-500 to-green-500"
             />
           </motion.div>

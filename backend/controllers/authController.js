@@ -200,6 +200,16 @@ exports.logout = async (req, res) => {
 // ─── POST /api/auth/google ──────────────────────────────
 exports.googleAuth = async (req, res) => {
   try {
+    if (
+      !process.env.GOOGLE_CLIENT_ID ||
+      process.env.GOOGLE_CLIENT_ID.includes("your_google_client_id_here")
+    ) {
+      return res.status(500).json({
+        success: false,
+        message: "Google login is not configured on server.",
+      });
+    }
+
     const { credential } = req.body;
 
     if (!credential) {

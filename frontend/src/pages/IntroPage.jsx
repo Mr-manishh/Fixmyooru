@@ -12,6 +12,7 @@ import {
   Users,
   BarChart3,
   Shield,
+  ShieldCheck,
 } from 'lucide-react';
 
 const fadeIn = {
@@ -68,6 +69,15 @@ const IntroPage = () => {
     <div className="bg-gray-50 overflow-hidden">
       {/* ────── Hero Section ────── */}
       <section className="relative min-h-[calc(100vh-64px)] flex items-center">
+        <div className="absolute top-5 right-5 z-20">
+          <Link
+            to="/admin/login"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/80 backdrop-blur border border-gray-200 text-gray-700 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm"
+          >
+            <ShieldCheck size={16} />
+          </Link>
+        </div>
+
         {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-gray-200/60 rounded-full blur-3xl" />
