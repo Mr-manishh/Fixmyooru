@@ -167,7 +167,7 @@ const AdminSignUp = () => {
               onError={() => toast.error('Admin Google signup failed')}
               theme="outline"
               size="large"
-              width="100%"
+              width={360}
               text="signup_with"
             />
           </div>

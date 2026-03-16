@@ -5,6 +5,10 @@ exports.createComplaint = async (req, res) => {
   try {
     const { title, description, category, location, image } = req.body;
 
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized request." });
+    }
+
     if (!title || !description || !category || !location) {
       return res.status(400).json({
         success: false,
@@ -45,18 +49,27 @@ exports.getMyComplaints = async (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
 
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized request." });
+    }
+
+    const pageNumber = Number.parseInt(page, 10);
+    const limitNumber = Number.parseInt(limit, 10);
+    const safePage = Number.isFinite(pageNumber) && pageNumber > 0 ? pageNumber : 1;
+    const safeLimit = Number.isFinite(limitNumber) && limitNumber > 0 ? limitNumber : 20;
+
     const filter = { user: req.user._id };
     if (status && status !== "All") {
       filter.status = status === "Completed" ? { $in: ["Completed", "Resolved"] } : status;
     }
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const skip = (safePage - 1) * safeLimit;
 
     const [complaints, total] = await Promise.all([
       Complaint.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parseInt(limit)),
+        .limit(safeLimit),
       Complaint.countDocuments(filter),
     ]);
 
@@ -67,8 +80,8 @@ exports.getMyComplaints = async (req, res) => {
         complaints,
         pagination: {
           total,
-          page: parseInt(page),
-          pages: Math.ceil(total / parseInt(limit)),
+          page: safePage,
+          pages: Math.ceil(total / safeLimit),
         },
       },
     });
@@ -81,6 +94,10 @@ exports.getMyComplaints = async (req, res) => {
 // ─── GET /api/complaints/stats — Get Complaint Stats ────
 exports.getStats = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized request." });
+    }
+
     const userId = req.user._id;
 
     const [total, pending, inProgress, completed] = await Promise.all([
@@ -106,6 +123,10 @@ exports.getStats = async (req, res) => {
 // ─── GET /api/complaints/:id — Get Single Complaint ─────
 exports.getComplaint = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized request." });
+    }
+
     const complaint = await Complaint.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -132,6 +153,10 @@ exports.getComplaint = async (req, res) => {
 // ─── DELETE /api/complaints/:id — Delete Complaint ──────
 exports.deleteComplaint = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized request." });
+    }
+
     const complaint = await Complaint.findOneAndDelete({
       _id: req.params.id,
       user: req.user._id,

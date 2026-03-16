@@ -101,7 +101,7 @@ const SignIn = () => {
             onError={() => toast.error('Google login failed')}
             theme="outline"
             size="large"
-            width="100%"
+            width={360}
             text="signin_with"
           />
         </div>

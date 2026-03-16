@@ -130,7 +130,7 @@ const AdminLogin = () => {
               onError={() => toast.error('Admin Google login failed')}
               theme="outline"
               size="large"
-              width="100%"
+              width={360}
               text="signin_with"
             />
           </div>
